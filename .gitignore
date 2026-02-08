@@ -3,3 +3,40 @@ DS*
 DS*/
 .DS_*
 
+# Virtual Environment
+app_venv/
+venv/
+env/
+.venv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+
+# Node (if any)
+node_modules/
+npm-debug.log
+
+# OS
+Thumbs.db

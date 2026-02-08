@@ -1,47 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
-  <!--general infomraion of the webpage-->
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chatbot</title>
-    <meta name="author" content="J.C. Chen">
-    <!-- <link rel="stylesheet" href="css/style.css" /> -->
+    <title>Chat AI Bot - Intelligent Conversation</title>
+    <meta name="author" content="AI Team">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- <link rel="shortcut icon" href='favicon.ico' type="image/x-icon">
-    <link rel="icon" href='favicon.ico' type="image/x-icon"> -->
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-  </head>
-  <!--end general information-->
-  <body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" onclick="startNewChat()" title="Start new conversation">
+                    <i class="fas fa-plus"></i> New Chat
+                </button>
+            </div>
+            <div class="chat-history">
+                <p class="history-title">Recent Chats</p>
+                <!-- Chat history items will be added here -->
+            </div>
+            <div class="sidebar-footer">
+                <button class="settings-btn" onclick="showSettings()" title="Open settings">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </aside>
 
-    <!-- <header>
-      <div class="color-block"></div>
-    </header> -->
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <!-- Header -->
+            <header class="chat-header">
+                <div class="header-content">
+                    <h1><i class="fas fa-comments"></i> Chat Assistant</h1>
+                    <p class="header-subtitle">Powered by Advanced AI</p>
+                </div>
+                <div class="header-actions">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search messages..." onkeyup="searchMessages()">
+                    <button class="menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" title="Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </header>
 
-    <!--Chatbot container-->
-    <main>  
-      <div class="chatbot">
-        <div class="chat-header">
-          <h1>My LLM</h1>
+            <!-- Messages Container -->
+            <div class="messages-wrapper">
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Welcome Screen -->
+                    <div class="welcome-screen">
+                        <div class="welcome-content">
+                            <div class="logo-section">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h2>Welcome to Chat AI Bot</h2>
+                            <p>Ask me anything and I'll help you get the answers you need</p>
+                            <div class="suggestions">
+                                <div class="suggestion-item" onclick="insertSuggestion('Explain quantum computing')">
+                                    <i class="fas fa-brain"></i>
+                                    <span>Explain quantum computing</span>
+                                </div>
+                                <div class="suggestion-item" onclick="insertSuggestion('Write a Python function')">
+                                    <i class="fas fa-code"></i>
+                                    <span>Write Python code</span>
+                                </div>
+                                <div class="suggestion-item" onclick="insertSuggestion('Tell me a joke')">
+                                    <i class="fas fa-laugh"></i>
+                                    <span>Tell me a joke</span>
+                                </div>
+                                <div class="suggestion-item" onclick="insertSuggestion('Summarize AI trends')">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>AI trends</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <form class="chat-form" id="chatForm">
+                    <!-- Category Selector (Phase 2) -->
+                    <div class="category-selector" id="categorySelector">
+                        <button type="button" class="category-tag active" onclick="selectCategory('General')" data-category="General">General</button>
+                        <button type="button" class="category-tag" onclick="selectCategory('Work')" data-category="Work">Work</button>
+                        <button type="button" class="category-tag" onclick="selectCategory('Learning')" data-category="Learning">Learning</button>
+                        <button type="button" class="category-tag" onclick="selectCategory('Ideas')" data-category="Ideas">Ideas</button>
+                        <button type="button" class="category-tag" onclick="selectCategory('Personal')" data-category="Personal">Personal</button>
+                    </div>
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your message here... (Press Ctrl+Enter to send)" 
+                            rows="1"
+                            class="message-textarea"
+                            onkeydown="handleKeydown(event)"
+                        ></textarea>
+                        <button type="submit" class="send-btn" id="sendBtn" title="Send message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <button type="button" class="export-btn" onclick="exportConversation()" title="Export conversation">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button type="button" class="export-btn" onclick="toggleBookmarks()" title="View bookmarks">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                    <p class="input-disclaimer">AI responses may not always be accurate. Always verify important information.</p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bookmarks Panel (Phase 2) -->
+    <div id="bookmarksPanel" class="bookmarks-panel">
+        <div class="bookmarks-header">
+            <h3>⭐ Bookmarks</h3>
+            <button class="bookmarks-close" onclick="toggleBookmarks()">&times;</button>
         </div>
-        <div class="header-sub-text">
-          <p>Copyright © JC 2023 - Created by JC with <a class="purple">❤</a></p>
+        <div class="bookmarks-content" id="bookmarksContent">
+            <p style="text-align: center; color: var(--text-tertiary); padding: 20px;">No bookmarks yet. Star messages to bookmark them!</p>
         </div>
+    </div>
 
-        <div class="spacer" id="messages-container"></div>
-        
-        <form class="chat-form" id="message-form">
-          <textarea type="text" id="message-input" placeholder="Send a message..."></textarea>
-          <button type="submit">➤</button> 
-        </form>
-      </div>
-    </main>
-    <!--end chatbot container-->
+    <!-- Edit Message Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Message</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="editTextarea" placeholder="Edit your message..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="closeEditModal()">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" onclick="saveEditedMessage()">Save</button>
+            </div>
+        </div>
+    </div>
 
-    <!--Javascript to call the language model-->
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Message</h2>
+                <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this message? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <!--end Javascript to call the language model-->
-  </body>
+</body>
 </html>
